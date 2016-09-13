@@ -1,1 +1,182 @@
-Hello world
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hospitals Performance Analysis</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Hospitals Performance Analysis">
+  <meta name="author" content="Laure Casanova">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Hospitals Performance Analysis</h1>
+    <h2>Comparison by State</h2>
+    <p>Laure Casanova<br/>Project Manager</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <article data-timings="">
+    <style type="text/css">
+body, td {
+   font-size: 14px;
+}
+code.r{
+  font-size: 17px;
+}
+pre {
+  font-size: 20px
+}
+</style>
+
+<h2>Background</h2>
+
+<p>This slidedeck was created to give more information about my Hospital Performance Comparison Shiny App which can be found at the following URL:
+<a href="https://laurecasanova.shinyapps.io/Hospitals_Comparison_By_State/" title="Hospitals Performance Comparison By State">Hospitals Comparison By State App</a></p>
+
+<p>The application is based on the <a href="https://d396qusza40orc.cloudfront.net/rprog%2Fdata%2FProgAssignment3-data.zip" title="Click to download the Zipfile">Hospital dataset</a> which was brought to my attention during the <a href="https://www.coursera.org/learn/r-programming" title="R Programming">R Programming Course</a> of <a href="https://www.coursera.org/specializations/jhu-data-science" title="the Data Science Specialization">the Data Science Specialization</a> by Johns Hopkins University via Coursera.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>ui.R: Getting the inputs</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The ui.R program is used to :</p>
+
+<ul>
+<li>Collect the different States the user is willing to compare</li>
+<li>Collect the first variable the users want to have more information on</li>
+<li>Collect the second variable the users want to have more information on</li>
+</ul>
+
+<p>In the code chunk below I used for the default values of the app:</p>
+
+<pre><code class="r">input &lt;- list()
+input$State_sel &lt;- c(&quot;CA&quot;,&quot;CT&quot;,&quot;IA&quot;)
+input$Variable1 &lt;- &quot;av_mort_rate_attack&quot;
+input$Variable2 &lt;- &quot;nb_dead_30_days_attack&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>server.R: Preparing the outputs</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>There are two outputs for this app, a plot and a table. To create them, the dataset was subsetted to include only the selected States as well as both of the selected variables.</p>
+
+<pre><code class="r">load(file = &quot;./data/Hospitals.rda&quot;)
+hosp &lt;- subset(Hospitals, State %in% input$State_sel, c(input$Variable1, input$Variable2, &quot;State&quot;))
+</code></pre>
+
+<p>The State variable is then transformed into a factor variable before the plot is prepared with the qplot function.</p>
+
+<pre><code class="r"> hosp$State &lt;- as.factor(hosp$State)
+    qplot(x=hosp[,1], y=hosp[,2], data=hosp,colour=State, xlab=input$Variable1, ylab=input$Variable2)
+</code></pre>
+
+<p>For the plot, both means are computed before the table is printed.</p>
+
+<pre><code class="r">m1 &lt;- aggregate(hosp[,1], by=list(hosp$State), mean)
+    m2 &lt;- aggregate(hosp[,2], by=list(hosp$State), mean)
+    print(setNames(cbind(m1, m2[,2]), c(&quot;State&quot;,input$Variable1, input$Variable2)))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>ui.R: Displaying the outputs</h2>
+  </hgroup>
+  <article data-timings="">
+    <p><img src="assets/fig/unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5"></p>
+
+<pre><code>##   State av_mort_rate_attack nb_dead_30_days_attack
+## 1    CA            15.53200               142.6489
+## 2    CT            14.88621               243.7586
+## 3    IA            15.52714               176.6571
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='NA'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='ui.R: Getting the inputs'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='server.R: Preparing the outputs'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='ui.R: Displaying the outputs'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
